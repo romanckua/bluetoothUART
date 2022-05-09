@@ -38,11 +38,11 @@ public class BluetoothLeService implements BluetoothConnection {
     @Override
     public void run() {
         device = bluetoothAdapter.getRemoteDevice(blueToothDeviceAddress);
-        try {
+/*        try {
             sleep(500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        }
+        }*/
         appendTextView("BLE mode. Connecting...wait");
         connectGatt();
     }
