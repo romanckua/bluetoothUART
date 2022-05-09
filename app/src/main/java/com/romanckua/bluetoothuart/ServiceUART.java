@@ -23,8 +23,7 @@ public class ServiceUART extends Service {
 
     private IBinder binder = new ServiceUARTBinder();
     private static final int ID_SERVICE = 17870;
-    //private static final String START_PLEASE = "start";
-    private static final String STOP_PLEASE = "stop";
+    private static final String STOP = "stop";
     private String deviceAddress = "00:00:00:00:00:00";
     private String mode = "classic";
     private ArrayList<String> messageRX = new ArrayList<>();
@@ -37,6 +36,7 @@ public class ServiceUART extends Service {
     public IBinder onBind(Intent intent) {
         return binder;
     }
+
     public ServiceUART() {
     }
 
@@ -48,18 +48,18 @@ public class ServiceUART extends Service {
         String channelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? createNotificationChannel(notificationManager) : "";
         Intent stopIntent = new Intent(this, ServiceUART.class);
         Intent resultIntent = new Intent(this, MainActivity.class);
-        stopIntent.setAction(STOP_PLEASE);
+        stopIntent.setAction(STOP);
         PendingIntent piStopService = PendingIntent.getService(this, 0, stopIntent, 0);
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId);
         Notification notification = notificationBuilder.setOngoing(true)
-                .setContentTitle("Сповіщення Bluetooth UART")
-                .setContentText("сервіс запущено у фоні")
+                .setContentTitle("Notification Bluetooth UART")
+                .setContentText("service run in foreground")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setPriority(NotificationCompat.PRIORITY_MIN)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
-                .addAction(android.R.drawable.ic_delete, "Закрити додаток", piStopService)
+                .addAction(android.R.drawable.ic_delete, "Close app", piStopService)
                 .setContentIntent(resultPendingIntent)
                 .build();
         startForeground(ID_SERVICE, notification);
@@ -70,7 +70,7 @@ public class ServiceUART extends Service {
 
         if (intent != null) {
             final String action = intent.getAction();
-            if (STOP_PLEASE.equals(action)) {
+            if (STOP.equals(action)) {
                 textMessage(MainActivity.PARAM_MSG, "destroy");
                 serviceStop();
             }
@@ -102,7 +102,6 @@ public class ServiceUART extends Service {
         return statusBTservice;
     }
 
-
     public void textMessage(String first, String second) {
         Intent intent = new Intent(MainActivity.BROADCAST_ACTION);
         intent.putExtra(first, second);
@@ -113,7 +112,6 @@ public class ServiceUART extends Service {
     }
 
     public void serviceStop() {
-
         bluetoothConnection.disconnect();
         thread.interrupt();
         stopSelf();
@@ -122,13 +120,8 @@ public class ServiceUART extends Service {
     public void disconnect() {
         System.out.println("dis start");
         if (bluetoothConnection != null) {
-            System.out.println(bluetoothConnection);
             bluetoothConnection.disconnect();
-            System.out.println(bluetoothConnection);
-
-
         }
-        System.out.println("send key");
         textMessage(MainActivity.PARAM_MSG, "buttonLock");
         setStatusConn("buttonStatus", false);
     }
@@ -136,7 +129,6 @@ public class ServiceUART extends Service {
     public void connect() {
         if (bluetoothConnection != null) {
             bluetoothConnection.disconnect();
-
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -146,11 +138,6 @@ public class ServiceUART extends Service {
         setting = new Setting(this);
         deviceAddress = setting.getSetting("device");
         mode = setting.getSetting("mode");
-        System.out.println("read config");
-        System.out.println(deviceAddress);
-        System.out.println(mode);
-
-
         if (mode.equals("ble")) {
             bluetoothConnection = new BluetoothLeService(ServiceUART.this, deviceAddress);
         }
@@ -161,7 +148,7 @@ public class ServiceUART extends Service {
         thread.start();
     }
 
-   public BluetoothConnection getBluetoothConnection() {
+    public BluetoothConnection getBluetoothConnection() {
         return bluetoothConnection;
     }
 

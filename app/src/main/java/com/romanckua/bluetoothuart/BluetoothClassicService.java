@@ -3,25 +3,20 @@ package com.romanckua.bluetoothuart;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.os.Handler;
 
 import java.io.*;
 import java.lang.reflect.Method;
 
 public class BluetoothClassicService implements BluetoothConnection {
 
-    private String blueToothDeviceAddress;
     private ServiceUART myService;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothDevice device;
     private BluetoothSocket clientSocket = null;
     private InputStream connectedInputStream = null;
     private OutputStream connectedOutputStream = null;
-    private Handler classicHandler = new Handler();
-    private Runnable servicesRunnable;
 
     public BluetoothClassicService(ServiceUART myService, String blueToothDeviceAddress) {
-        this.blueToothDeviceAddress = blueToothDeviceAddress;
         this.myService = myService;
         device = bluetoothAdapter.getRemoteDevice(blueToothDeviceAddress);
     }
@@ -51,7 +46,6 @@ public class BluetoothClassicService implements BluetoothConnection {
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(connectedOutputStream));
             bufferedWriter.write(string);
             bufferedWriter.flush();
-            /// bufferedWriter.close();
         } catch (Exception e) {
             buttonLock();
             appendTextView(e.getMessage());
@@ -60,7 +54,7 @@ public class BluetoothClassicService implements BluetoothConnection {
 
     @Override
     public void run() {
-        appendTextView("Classic mode. Спроба підключення, чекайте...");
+        appendTextView("Classic mode. Connecting... wait");
 
         try {
             Method m = device.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
@@ -72,7 +66,7 @@ public class BluetoothClassicService implements BluetoothConnection {
         }
         try {
             clientSocket.connect();
-            appendTextView("Підключено.");
+            appendTextView("Connect.");
             buttonUnLock();
             connectedInputStream = clientSocket.getInputStream();
             connectedOutputStream = clientSocket.getOutputStream();

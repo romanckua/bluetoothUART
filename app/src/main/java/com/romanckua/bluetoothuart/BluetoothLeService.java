@@ -43,7 +43,7 @@ public class BluetoothLeService implements BluetoothConnection {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        appendTextView("BLE mode. Спроба підключення, чекайте...");
+        appendTextView("BLE mode. Connecting...wait");
         connectGatt();
     }
 
@@ -56,7 +56,7 @@ public class BluetoothLeService implements BluetoothConnection {
 
             if (status == GATT_SUCCESS) {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
-                    appendTextView("Підключено.");
+                    appendTextView("Connect.");
                     bondstate = device.getBondState();
                     if (bondstate == BOND_BONDING) {
                         while (bondstate == BOND_BONDING) {
@@ -98,7 +98,7 @@ public class BluetoothLeService implements BluetoothConnection {
                     bleHandler.postDelayed(discoverServicesRunnable, delay);
 
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                    appendTextView("Відключаюся...");
+                    appendTextView("Disconnect..");
                     disconnect();
                 } else {
 
@@ -109,8 +109,8 @@ public class BluetoothLeService implements BluetoothConnection {
                     case GATT_SERVER:
                         buttonLock();
                         gatt.close();
-                        appendTextView("Сплив час очікування з'єднання та(або) пристрій відключився сам");
-                        appendTextView("Спроба підключення");
+                        appendTextView("The connection waiting time has elapsed and (or) the device has switched itself off");
+                        appendTextView("Attempt to connect");
                         try {
                             sleep(500);
                             connectGatt();
@@ -121,19 +121,19 @@ public class BluetoothLeService implements BluetoothConnection {
                     case GATT_FAILURE:
                         disconnect();
                         buttonLock();
-                        appendTextView("Помилка: GATT_FAILURE -");
+                        appendTextView("Error: GATT_FAILURE -");
                         appendTextView(String.valueOf(status));
                         break;
                     case 19:
                         disconnect();
                         buttonLock();
-                        appendTextView("Віддалений пристрій від'єднався");
+                        appendTextView("The remote device is disconnected");
                         appendTextView(String.valueOf(status));
                         break;
                     default:
                         disconnect();
                         buttonLock();
-                        appendTextView("Помилка: -");
+                        appendTextView("Error: -");
                         appendTextView(String.valueOf(status));
                 }
             }
