@@ -37,14 +37,12 @@ public class ScanClassicBT implements BluetoothDeviceList {
                         listViewBTlist.add(device.getName() + ": " + device.getAddress());
                         macAddressList.add(device.getAddress());
                         adapter.notifyDataSetChanged();
-                        System.out.println(device.getAddress());
                     }
                 } else {
                     hashSetBTaddList.add(device.getAddress());
                     listViewBTlist.add(device.getName() + ": " + device.getAddress());
                     macAddressList.add(device.getAddress());
                     adapter.notifyDataSetChanged();
-                    System.out.println(device.getAddress());
                 }
             }
         }
@@ -58,13 +56,11 @@ public class ScanClassicBT implements BluetoothDeviceList {
 
     @Override
     public ArrayAdapter getListAdapter() {
-
         return adapter;
     }
 
     @Override
     public void scanStart() {
-
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -82,9 +78,6 @@ public class ScanClassicBT implements BluetoothDeviceList {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         activity.registerReceiver(deviceBroadcastReceiver, filter);
 
-/*        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        activity.registerReceiver(deviceBroadcastReceiver, filter);*/
-
     }
 
     @Override
@@ -93,9 +86,6 @@ public class ScanClassicBT implements BluetoothDeviceList {
         if (bluetoothAdapter != null) {
             bluetoothAdapter.cancelDiscovery();
         }
-/*        if (deviceBroadcastReceiver != null) {
-            activity.unregisterReceiver(deviceBroadcastReceiver);
-        }*/
     }
 
     @Override
@@ -116,14 +106,12 @@ public class ScanClassicBT implements BluetoothDeviceList {
                         listViewBTlist.add(index.getName() + ": " + index.getAddress());
                         macAddressList.add(index.getAddress());
                         adapter.notifyDataSetChanged();
-                        System.out.println(index.getAddress());
                     }
                 } else {
                     hashSetBTaddList.add(index.getAddress());
                     listViewBTlist.add(index.getName() + ": " + index.getAddress());
                     macAddressList.add(index.getAddress());
                     adapter.notifyDataSetChanged();
-                    System.out.println(index.getAddress());
                 }
             }
         }

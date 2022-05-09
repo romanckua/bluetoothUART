@@ -118,7 +118,6 @@ public class ServiceUART extends Service {
     }
 
     public void disconnect() {
-        System.out.println("dis start");
         if (bluetoothConnection != null) {
             bluetoothConnection.disconnect();
         }

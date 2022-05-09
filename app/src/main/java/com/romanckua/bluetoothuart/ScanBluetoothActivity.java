@@ -10,16 +10,17 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class ScanBluetoothActivity extends AppCompatActivity {
 
-    private String scanBluetoothMethod = "default";
+    private String scanBluetoothMethod = "classic";
     private BluetoothDeviceList scan;
-    ListView listView;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.scannerbluetooth);
 
-        scanBluetoothMethod = getIntent().getStringExtra("ScanBluetoothActivity");
+        Setting setting = new Setting(this);
+        scanBluetoothMethod = setting.getSetting("method");
 
         if (scanBluetoothMethod.equals("ble")) {
             scan = new ScanBLE(ScanBluetoothActivity.this);
@@ -28,17 +29,14 @@ public class ScanBluetoothActivity extends AppCompatActivity {
             scan = new ScanClassicBT(ScanBluetoothActivity.this);
         }
 
-            scan.scanStart();
-            listView = findViewById(R.id.scannerbluetoothList);
-            listView.setAdapter(scan.getListAdapter());
-
-
+        scan.scanStart();
+        listView = findViewById(R.id.scannerbluetoothList);
+        listView.setAdapter(scan.getListAdapter());
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View itemClicked, int position, long id) {
                 String device = scan.getSelectBluetoothDevice(position);
-                System.out.println("select device: "+device);
                 Setting setting = new Setting(ScanBluetoothActivity.this);
                 setting.setSetting("device", device);
                 Intent intent = new Intent(MainActivity.BROADCAST_ACTION);
@@ -53,8 +51,9 @@ public class ScanBluetoothActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         scan.scanStop();
-        super.onPause();
         finish();
+        super.onPause();
+
     }
 }
 
